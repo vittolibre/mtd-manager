@@ -19,9 +19,6 @@ public class Deployment implements Serializable {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "strategy", nullable = false)
-    private Long strategy;
-
     @Column(name = "namespace")
     private String namespace;
 
