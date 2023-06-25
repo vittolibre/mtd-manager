@@ -50,14 +50,15 @@ public class IPShufflingStrategyService implements Runnable {
 //        KubernetesClient kubernetesClient = new KubernetesClientBuilder()
 //                .withConfig(new ConfigBuilder().withMasterUrl(masterUrl).build())
 //                .build();
+        log.info("IPShufflingStrategyService running");
         KubernetesClient kubernetesClient = new KubernetesClientBuilder().build();
-
+        log.info("KubernetesClient builded");
         while (true) {
 
             Strategy ipShuffling = strategyRepository.findByName(IP_SHUFFLING_CONTAINER).orElseThrow(EntityNotFoundException::new);
 
             List<Deployment> deployments = deploymentRepository.findAll();
-
+            log.info("deployments found: {}", deployments.size());
             for (Deployment deployment : deployments) {
                 if(Boolean.TRUE == ipShuffling.getEnabled()){
                     io.fabric8.kubernetes.api.model.apps.Deployment runningDeployment = kubernetesClient.apps().deployments().inNamespace(deployment.getNamespace()).withName(deployment.getName()).get();

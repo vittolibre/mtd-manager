@@ -21,7 +21,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -44,14 +46,16 @@ public class ServiceAccountStrategyService implements Runnable {
 //        KubernetesClient kubernetesClient = new KubernetesClientBuilder()
 //                .withConfig(new ConfigBuilder().withMasterUrl(masterUrl).build())
 //                .build();
+        log.info("ServiceAccountStrategyService running");
         KubernetesClient kubernetesClient = new KubernetesClientBuilder().build();
+        log.info("KubernetesClient builded");
 
         while (true) {
 
             Strategy saShuffling = strategyRepository.findByName(SERVICE_ACCOUNT_SHUFFLING_CONTAINER).orElseThrow(EntityNotFoundException::new);
 
             List<Deployment> deployments = deploymentRepository.findAll();
-
+            log.info("deployments found: {}", deployments.size());
             for (Deployment deployment : deployments) {
                 if(Boolean.TRUE == saShuffling.getEnabled()){
                     io.fabric8.kubernetes.api.model.apps.Deployment runningDeployment = kubernetesClient.apps().deployments().inNamespace(deployment.getNamespace()).withName(deployment.getName()).get();
@@ -63,6 +67,11 @@ public class ServiceAccountStrategyService implements Runnable {
                             .replace();
 
                     log.info("Restart executed for deployment {}", runningDeployment.getMetadata().getName());
+                    String oldServiceAccountName = runningDeployment.getSpec().getTemplate().getSpec().getServiceAccountName();
+                    if(!"default".equals(oldServiceAccountName)){
+                        ServiceAccount old = new ServiceAccountBuilder().withNewMetadata().withName(oldServiceAccountName).endMetadata().build();
+                        kubernetesClient.serviceAccounts().resource(old).delete();
+                    }
                 }
             }
 
@@ -74,20 +83,22 @@ public class ServiceAccountStrategyService implements Runnable {
     private static void changeServiceAccount(KubernetesClient kubernetesClient, Deployment deployment, io.fabric8.kubernetes.api.model.apps.Deployment runningDeployment) throws InterruptedException {
         String generatedString = RandomStringUtils.randomAlphanumeric(5).toLowerCase();
         String serviceAccountName = deployment.getName().replace("-", ".") + "." + generatedString;
+        Map<String, String> annotations = new HashMap<>();
+        annotations.put("iam.kubesphere.io/role", "admin");
         ServiceAccount sa = new ServiceAccountBuilder()
                 .withNewMetadata()
                 .withName(serviceAccountName)
                 .withNamespace(deployment.getNamespace())
+                .withAnnotations(annotations)
                 .endMetadata()
                 .build();
         kubernetesClient.serviceAccounts().resource(sa).createOrReplace();
 
         Thread.sleep(1000);
 
-        String oldServiceAccountName = runningDeployment.getSpec().getTemplate().getSpec().getServiceAccountName();
+
         runningDeployment.getSpec().getTemplate().getSpec().setServiceAccountName(serviceAccountName);
-        ServiceAccount old = new ServiceAccountBuilder().withNewMetadata().withName(oldServiceAccountName).endMetadata().build();
-        kubernetesClient.serviceAccounts().resource(old).delete();
+
     }
 
 }
