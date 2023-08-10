@@ -2,7 +2,6 @@ package mtd.manager.service;
 
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountBuilder;
-import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,8 +16,6 @@ import mtd.manager.repository.StrategyRepository;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -43,9 +40,7 @@ public class ServiceAccountStrategyService implements Runnable {
     @Override
     @SneakyThrows
     public void run()  {
-//        KubernetesClient kubernetesClient = new KubernetesClientBuilder()
-//                .withConfig(new ConfigBuilder().withMasterUrl(masterUrl).build())
-//                .build();
+
         log.info("ServiceAccountStrategyService running");
         KubernetesClient kubernetesClient = new KubernetesClientBuilder().build();
         log.info("KubernetesClient builded");
@@ -94,8 +89,7 @@ public class ServiceAccountStrategyService implements Runnable {
                 .build();
         kubernetesClient.serviceAccounts().resource(sa).createOrReplace();
 
-        Thread.sleep(1000);
-
+        //Thread.sleep(1000);
 
         runningDeployment.getSpec().getTemplate().getSpec().setServiceAccountName(serviceAccountName);
 
