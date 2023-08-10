@@ -22,4 +22,7 @@ public class Deployment implements Serializable {
     @Column(name = "namespace")
     private String namespace;
 
+    @Column(name = "type")
+    private String type;
+
 }

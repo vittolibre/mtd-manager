@@ -18,6 +18,8 @@ public class DeploymentVO implements Serializable {
     @NotNull(message = "strategy can not null")
     private Long strategy;
 
+    private String type;
+
     private String namespace;
 
 }

@@ -9,12 +9,10 @@ import java.io.Serializable;
 public class NodeDTO implements Serializable {
     private static final long serialVersionUID = 1L;
     private String hostname;
-
     private String ipAddress;
-
     private Long id;
-
     private String role;
+    private String type;
     private Boolean available;
 
 }

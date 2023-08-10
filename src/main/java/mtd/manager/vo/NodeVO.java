@@ -12,14 +12,12 @@ public class NodeVO implements Serializable {
 
     @NotNull(message = "hostname can not null")
     private String hostname;
-
     @NotNull(message = "ipAddress can not null")
     private String ipAddress;
-
     @NotNull(message = "id can not null")
     private Long id;
-
     private String role;
+    private String type;
     private Boolean available;
 
 }

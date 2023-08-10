@@ -25,6 +25,9 @@ public class Node implements Serializable {
     @Column(name = "role")
     private String role;
 
+    @Column(name = "type")
+    private String type;
+
     @Column(name = "available")
     private Boolean available;
 

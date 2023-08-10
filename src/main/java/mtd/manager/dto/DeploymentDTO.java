@@ -13,6 +13,9 @@ public class DeploymentDTO implements Serializable {
     private Long strategy;
 
     private String namespace;
+
     private Long id;
+
+    private String type;
 
 }

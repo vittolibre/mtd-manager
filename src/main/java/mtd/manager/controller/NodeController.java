@@ -52,4 +52,14 @@ public class NodeController {
     public List<NodeDTO> findAll() {
         return nodeService.findAll();
     }
+
+    @GetMapping("/cloud/all")
+    public List<NodeDTO> findAllCloudNode() {
+        return nodeService.findAllCloudNode();
+    }
+
+    @GetMapping("/edge/all")
+    public List<NodeDTO> findAllEdgeNode() {
+        return nodeService.findAllEdgeNode();
+    }
 }

@@ -18,6 +18,8 @@ import java.util.NoSuchElementException;
 @Service
 public class NodeService {
 
+    public static final String CLOUD = "cloud";
+    public static final String EDGE = "edge";
     @Autowired
     private NodeRepository nodeRepository;
 
@@ -61,6 +63,18 @@ public class NodeService {
     public List<NodeDTO> findAll() {
         List<NodeDTO> list = new ArrayList<>();
         nodeRepository.findAll().forEach(node -> list.add(toDTO(node)));
+        return list;
+    }
+
+    public List<NodeDTO> findAllCloudNode() {
+        List<NodeDTO> list = new ArrayList<>();
+        nodeRepository.findAllByType(CLOUD).forEach(node -> list.add(toDTO(node)));
+        return list;
+    }
+
+    public List<NodeDTO> findAllEdgeNode() {
+        List<NodeDTO> list = new ArrayList<>();
+        nodeRepository.findAllByType(EDGE).forEach(node -> list.add(toDTO(node)));
         return list;
     }
 }
