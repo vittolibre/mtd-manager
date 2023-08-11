@@ -1,3 +1,5 @@
 # mtd-manager
-Web console for control moving target defense on Kubernetes cluster\
+Web console written in Java for control moving target defense on Kubernetes cluster. Two strategies are implemented:\
+- Pod IP address shuffling\
+- Service account substitution\
 mtd-web-console in bundle for now
